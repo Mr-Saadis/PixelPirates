@@ -1,50 +1,121 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
-const ChatWindow = () => {
-  const [message, setMessage] = useState('');
+const ChatWindow = ({ userId }) => {
+  const [departments, setDepartments] = useState([]);
+  const [selectedDept, setSelectedDept] = useState(null);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const bottomRef = useRef(null);
 
-  const staticMessages = [
-    { id: 1, sender: 'Admin', content: 'Welcome! How can we help you today?' },
-    { id: 2, sender: 'You', content: 'The water pipe is leaking on 5th street.' },
-    { id: 3, sender: 'Admin', content: 'Thank you. The sanitation team will be alerted.' },
-    { id: 4, sender: 'You', content: 'Appreciate it!' },
-  ];
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      const { data, error } = await supabase.from("depmartment").select("*");
+      if (error) console.error("Error fetching departments:", error);
+      else setDepartments(data || []);
+    };
+
+    fetchDepartments();
+  }, []);
+
+  const fetchMessages = async () => {
+    if (!selectedDept) return;
+    const { data, error } = await supabase
+      .from("message")
+      .select("*")
+      .eq("department_id", selectedDept.id)
+      .order("created_at");
+
+    if (error) console.error("Message fetch error:", error);
+    else setMessages(data || []);
+  };
+
+  useEffect(() => {
+    if (selectedDept) fetchMessages();
+  }, [selectedDept]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    if (!message.trim() || !selectedDept) return;
+
+    const { data: officials } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("role", "official")
+      .eq("department_id", selectedDept.id);
+
+    if (officials?.length) {
+      const messagesToSend = officials.map((official) => ({
+        sender_id: userId,
+        receiver_id: official.id,
+        content: message,
+        department_id: selectedDept.id,
+      }));
+
+      const { error } = await supabase.from("message").insert(messagesToSend);
+      if (error) console.error("Send error:", error);
+      else {
+        setMessage("");
+        fetchMessages();
+      }
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1D3557] via-[#2E5A88] to-[#457B9D] p-4">
-      <div className="w-full max-w-4xl bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl bg-gradient-to-br from-[#1D3557] via-[#2E5A88] to-[#457B9D] backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden animate-fade-in">
         <div className="grid grid-cols-3">
           {/* Sidebar */}
           <div className="col-span-1 bg-[#1D3557] p-6 text-white border-r border-white/10">
             <h2 className="text-2xl font-bold mb-6">Departments</h2>
             <ul className="space-y-4">
-              <li className="bg-white/10 hover:bg-[#2E5A88] transition p-4 rounded-lg cursor-pointer">Sanitation</li>
-              <li className="bg-white/10 hover:bg-[#2E5A88] transition p-4 rounded-lg cursor-pointer">Transport</li>
-              <li className="bg-white/10 hover:bg-[#2E5A88] transition p-4 rounded-lg cursor-pointer">Electricity</li>
+              {departments.map((dept, i) => (
+                <li
+                  key={i}
+                  onClick={() => setSelectedDept(dept)}
+                  className={`p-4 rounded-lg cursor-pointer transition ${
+                    selectedDept?.id === dept.id
+                      ? "bg-[#2E5A88]"
+                      : "bg-white/10 hover:bg-[#2E5A88]"
+                  }`}
+                >
+                  {dept.department_name}
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Chat Area */}
           <div className="col-span-2 flex flex-col h-[80vh]">
-            <div className="flex-1 p-6 overflow-y-auto space-y-6">
-              {staticMessages.map((msg) => (
+            <div className="flex-1 p-6 overflow-y-auto space-y-6 scrollbar-hide">
+              {messages.map((msg, i) => (
                 <div
-                  key={msg.id}
+                  key={i}
                   className={`max-w-[75%] px-5 py-3 rounded-xl shadow-md transition transform ${
-                    msg.sender === 'You'
-                      ? 'ml-auto bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
-                      : 'bg-white/10 text-white'
+                    msg.sender_id === userId
+                      ? "ml-auto bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
+                      : "bg-white/10 text-white"
                   }`}
                 >
-                  <p className="text-sm font-semibold mb-1">{msg.sender}</p>
+                  <p className="text-sm font-semibold mb-1">
+                    {msg.sender_id === userId ? "You" : "Official"}
+                  </p>
                   <p className="leading-relaxed">{msg.content}</p>
                 </div>
               ))}
+              <div ref={bottomRef}></div>
             </div>
 
-            <form onSubmit={(e) => e.preventDefault()} className="flex items-center p-4 border-t border-white/10 bg-white/10">
+            <form
+              onSubmit={sendMessage}
+              className="flex items-center p-4 border-t border-white/10 bg-white/10"
+            >
               <input
                 type="text"
                 value={message}

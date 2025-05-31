@@ -1,12 +1,14 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import { toast } from 'sonner';
+import React, { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function MyIssuesListPage() {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const fetchMyIssues = async () => {
     const {
@@ -20,13 +22,13 @@ export default function MyIssuesListPage() {
     }
 
     const { data, error } = await supabase
-      .from('issues')
-      .select('*')
-      .eq('created_by', user.id)
-      .order('created_at', { ascending: false });
+      .from("issues")
+      .select("*")
+      .eq("created_by", user.id)
+      .order("created_at", { ascending: false });
 
     if (error) {
-      toast.error('Failed to fetch issues');
+      toast.error("Failed to fetch issues");
     } else {
       setIssues(data);
     }
@@ -40,7 +42,9 @@ export default function MyIssuesListPage() {
 
   return (
     <div className="min-h-screen bg-[#1D3557] text-white p-6">
-      <h2 className="text-2xl font-bold mb-4 text-center">📋 My Reported Issues</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">
+        📋 My Reported Issues
+      </h2>
 
       {loading ? (
         <p className="text-center text-white">Loading...</p>
@@ -67,10 +71,10 @@ export default function MyIssuesListPage() {
                   </td>
                   <td className="px-4 py-2">
                     <button
-                      onClick={() => toast.info('Coming Soon: View Details')}
+                      onClick={() => router.push("/ctzChatWithOff")}
                       className="bg-[#457B9D] hover:bg-[#35607d] px-3 py-1 rounded-md"
                     >
-                      View
+                      Chat With Official
                     </button>
                   </td>
                 </tr>
