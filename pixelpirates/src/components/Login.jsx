@@ -13,22 +13,51 @@ const Login = () => {
 
   const handleLogin = async () => {
     if (!emailRegex.test(email)) {
-      toast("Invalid email", {
-        description: "Please enter a valid email address.",
-      });
+      toast.error("❌ Invalid email address.");
+      return;
     }
+
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
+
+    // 🔐 1. Sign in with Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+
+    if (authError) {
+      setLoading(false);
+      toast.error("🚫 " + authError.message);
+      return;
+    }
+
+    // ✅ 2. Get user's role from profiles table
+    const userId = authData.user?.id;
+
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .single();
+
     setLoading(false);
 
-    if (error) {
-      toast.error(error.message);
+    if (profileError || !profile?.role) {
+      toast.error("❌ Failed to get user role.");
+      return;
+    }
+
+    const role = profile.role;
+
+    toast.success("✅ Logged in successfully!");
+
+    // 🚀 3. Redirect based on role
+    if (role === "admin") {
+      router.push("/admin");
+    } else if (role === "citizen") {
+      router.push("/citizendashboard");
     } else {
-      toast.success("You Logged In Sucessfully!");
-      router.push("/dashboard");
+      toast.error("Unknown user role. Access denied.");
     }
   };
 
