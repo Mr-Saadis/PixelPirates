@@ -1,13 +1,31 @@
 'use client';
 
 import React, { useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+//import { toast } from 'react-hot-toast';
+import { Toaster } from 'sonner';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('If this email exists, a reset link has been sent.');
+    setLoading(true);
+
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'http://localhost:3000/update-password',
+    });
+
+    setLoading(false);
+
+    if (error) {
+      //toast.error("❌ " + error.message);
+      toast("Signup failed", { description: error.message });
+    } else {
+     // toast.success("✅ Reset link sent if email exists.");
+     toast("Signup failed", { description: error.message });
+    }
   };
 
   return (
@@ -47,6 +65,7 @@ const ForgotPassword = () => {
 
             <button
               type="submit"
+              disabled={loading}
               className={`w-full py-2 px-4 rounded-lg font-semibold text-white 
                 bg-gradient-to-r from-[#457B9D] to-[#1D3557] 
                 hover:from-[#2E5A88] hover:to-[#1D3557] 
@@ -54,7 +73,7 @@ const ForgotPassword = () => {
                 transition-all duration-300 ease-in-out 
                 hover:scale-[1.03] active:scale-95`}
             >
-              Send Reset Link
+              {loading ? 'Sending...' : 'Send Reset Link'}
             </button>
           </form>
 
