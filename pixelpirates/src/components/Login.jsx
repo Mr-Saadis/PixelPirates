@@ -49,13 +49,17 @@ const Login = () => {
 
     const role = profile.role;
 
-    toast.success("Logged in successfully!");
-
+    
     // 🚀 3. Redirect based on role
     if (role === "admin") {
+      toast.success("Logged in successfully!");
       router.push("/admindashboard");
     } else if (role === "citizen") {
+      toast.success("Logged in successfully!");
       router.push("/citizendashboard");
+    } else if (role === "official") {
+      toast.success("Logged in successfully!");
+      router.push("/OfficialDashboard");
     } else {
       toast.error("Unknown user role. Access denied.");
     }
