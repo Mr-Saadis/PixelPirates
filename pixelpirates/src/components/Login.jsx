@@ -13,7 +13,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     if (!emailRegex.test(email)) {
-      toast.error("❌ Invalid email address.");
+      toast.error("Invalid email address.");
       return;
     }
 
@@ -43,17 +43,17 @@ const Login = () => {
     setLoading(false);
 
     if (profileError || !profile?.role) {
-      toast.error("❌ Failed to get user role.");
+      toast.error(" Failed to get user role.");
       return;
     }
 
     const role = profile.role;
 
-    toast.success("✅ Logged in successfully!");
+    toast.success("Logged in successfully!");
 
     // 🚀 3. Redirect based on role
     if (role === "admin") {
-      router.push("/admin");
+      router.push("/admindashboard");
     } else if (role === "citizen") {
       router.push("/citizendashboard");
     } else {
