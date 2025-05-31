@@ -18,6 +18,7 @@ export default function AdminDashboard() {
       const { data: issuesData } = await supabase.from('issues').select('*');
       const { data: messagesData } = await supabase.from('message').select('*');
 
+      
       setUsers(usersData || []);
       setIssues(issuesData || []);
       setMessages((messagesData || []).filter(m => m.sender_id !== userSession?.user?.id));
