@@ -18,7 +18,7 @@ export default function AdminDashboard() {
       const { data: issuesData } = await supabase.from('issues').select('*');
       const { data: messagesData } = await supabase.from('message').select('*');
 
-      
+
       setUsers(usersData || []);
       setIssues(issuesData || []);
       setMessages((messagesData || []).filter(m => m.sender_id !== userSession?.user?.id));
@@ -111,7 +111,6 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-<<<<<<< Updated upstream
                 {messages.map((msg, i) => {
                   const sender = users.find((u) => u.id === msg.sender_id);
                   return (
@@ -122,15 +121,6 @@ export default function AdminDashboard() {
                     </tr>
                   );
                 })}
-=======
-                {messages.map((msg,index) => (
-                  <tr key={index} className="border-t">
-                    <td className="px-4 py-2">{msg.sender_name || 'Unknown'}</td>
-                    <td className="px-4 py-2">{new Date(msg.created_at).toLocaleString()}</td>
-                    <td className="px-4 py-2">{msg.content}</td>
-                  </tr>
-                ))}
->>>>>>> Stashed changes
               </tbody>
             </table>
           </div>
