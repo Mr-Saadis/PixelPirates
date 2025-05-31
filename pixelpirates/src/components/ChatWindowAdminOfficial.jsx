@@ -126,8 +126,8 @@ const ChatWindowAdminOfficial = ({ userId, userRole }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1D3557] via-[#2E5A88] to-[#457B9D] p-4">
-      <div className="w-full max-w-4xl bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl bg-gradient-to-br from-[#1D3557] via-[#2E5A88] to-[#457B9D] backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden">
         <div className="grid grid-cols-3">
           {/* Sidebar */}
           <div className="col-span-1 bg-[#1D3557] p-6 text-white border-r border-white/10">
