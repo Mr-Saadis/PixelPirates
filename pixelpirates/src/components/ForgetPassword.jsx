@@ -1,30 +1,38 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import React, { useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 //import { toast } from 'react-hot-toast';
-import { Toaster } from 'sonner';
+import { toast, Toaster } from "sonner";
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!emailRegex.test(email)) {
+      toast("Invalid email", {
+        description: "Please enter a valid email address.",
+      });
+    }
+
     setLoading(true);
 
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'http://localhost:3000/update-password',
+      redirectTo: "http://localhost:3000/update-password",
     });
 
     setLoading(false);
 
     if (error) {
-      //toast.error("❌ " + error.message);
-      toast("Signup failed", { description: error.message });
+      toast("Reset failed", { description: error.message });
     } else {
-     // toast.success("✅ Reset link sent if email exists.");
-     toast("Signup failed", { description: error.message });
+      toast("📧 Check your email", {
+        description: "We've sent a password reset link.",
+      });
+      setEmail("");
     }
   };
 
@@ -73,13 +81,16 @@ const ForgotPassword = () => {
                 transition-all duration-300 ease-in-out 
                 hover:scale-[1.03] active:scale-95`}
             >
-              {loading ? 'Sending...' : 'Send Reset Link'}
+              {loading ? "Sending..." : "Send Reset Link"}
             </button>
           </form>
 
           <p className="text-sm mt-4 text-center">
-            Remember your password?{' '}
-            <a href="/login" className="text-blue-300 underline hover:text-white transition">
+            Remember your password?{" "}
+            <a
+              href="/login"
+              className="text-blue-300 underline hover:text-white transition"
+            >
               Log In
             </a>
           </p>

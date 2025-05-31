@@ -2,14 +2,21 @@
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleLogin = async () => {
+    if (!emailRegex.test(email)) {
+      toast("Invalid email", {
+        description: "Please enter a valid email address.",
+      });
+    }
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -18,8 +25,9 @@ const Login = () => {
     setLoading(false);
 
     if (error) {
-      alert("❌ Login failed: " + error.message);
+      toast.error(error.message);
     } else {
+      toast.success("You Logged In Sucessfully!");
       router.push("/dashboard");
     }
   };

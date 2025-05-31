@@ -10,8 +10,14 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleSignup = async () => {
+    if (!emailRegex.test(email)) {
+      toast("Invalid email", {
+        description: "Please enter a valid email address.",
+      });
+    }
     setLoading(true);
 
     const { data, error } = await supabase.auth.signUp({ email, password });
@@ -57,8 +63,12 @@ const Signup = () => {
       {/* Right Form Section */}
       <div className="md:w-1/2 w-full flex items-center justify-center p-6">
         <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl w-full max-w-sm animate-slide-up text-white">
-          <h2 className="text-3xl font-bold text-center mb-3 tracking-wider drop-shadow">SMART CITY</h2>
-          <h3 className="text-lg font-semibold text-center mb-6">Create your account</h3>
+          <h2 className="text-3xl font-bold text-center mb-3 tracking-wider drop-shadow">
+            SMART CITY
+          </h2>
+          <h3 className="text-lg font-semibold text-center mb-6">
+            Create your account
+          </h3>
 
           <input
             type="text"
@@ -95,9 +105,25 @@ const Signup = () => {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  ></path>
                 </svg>
                 Signing up...
               </span>
@@ -108,7 +134,10 @@ const Signup = () => {
 
           <p className="text-sm mt-4 text-center">
             Already have an account?{" "}
-            <a href="/login" className="text-blue-300 underline hover:text-white transition">
+            <a
+              href="/login"
+              className="text-blue-300 underline hover:text-white transition"
+            >
               Log In
             </a>
           </p>

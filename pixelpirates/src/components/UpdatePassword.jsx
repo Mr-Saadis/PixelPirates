@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner'; 
 
 const UpdatePassword = () => {
   const [password, setPassword] = useState('');
