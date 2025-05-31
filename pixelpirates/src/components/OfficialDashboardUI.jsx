@@ -10,6 +10,7 @@ import {
   FaUserShield,
   FaHome,
 } from 'react-icons/fa';
+import ChatWindowAdminOfficial from './ChatWindowAdminOfficial';
 
 export default function OfficialDashboard() {
   const [userName, setUserName] = useState('');
@@ -18,6 +19,7 @@ export default function OfficialDashboard() {
   const [resolvedThisMonthCount, setResolvedThisMonthCount] = useState(0);
   const [chatsWithCitizensCount, setChatsWithCitizensCount] = useState(0);
 
+  const [showChatWindow, setShowChatWindow] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -87,12 +89,12 @@ export default function OfficialDashboard() {
             SmartCity Official
           </div>
           <nav className="flex flex-col gap-2 p-4">
-            <SidebarItem icon={<FaHome />} label="Home" onClick={() => handleNavigation('/officialdashboard')} />
-            <SidebarItem icon={<FaEdit />} label="Update Issues" onClick={() => handleNavigation('/officialdashboard/update-issues')} />
-            <SidebarItem icon={<FaMapMarkedAlt />} label="Map View" onClick={() => handleNavigation('/map')} />
-            <SidebarItem icon={<FaComments />} label="Chat with Admin" onClick={() => handleNavigation('/officialdashboard/chat-admin')} />
-            <SidebarItem icon={<FaComments />} label="Chat with Citizens" onClick={() => handleNavigation('/officialdashboard/chat-citizens')} />
-            <SidebarItem icon={<FaUserShield />} label="Performance" onClick={() => handleNavigation('/officialdashboard/performance')} />
+            <SidebarItem icon={<FaHome />} label="Home" onClick={() => {handleNavigation('/OfficialDashboard');setShowChatWindow(false) }} />
+            <SidebarItem icon={<FaEdit />} label="Update Issues" onClick={() => {handleNavigation('/updated');setShowChatWindow(false) }} />
+            <SidebarItem icon={<FaMapMarkedAlt />} label="Map View" onClick={() => {handleNavigation('/map');setShowChatWindow(false) }} />
+            <SidebarItem icon={<FaComments />} label="Chat with Admin" onClick={() => setShowChatWindow(true) } />
+            <SidebarItem icon={<FaComments />} label="Chat with Citizens" onClick={() => {handleNavigation('/officialdashboard/chat-citizens');setShowChatWindow(false) }} />
+            <SidebarItem icon={<FaUserShield />} label="Performance" onClick={() => {handleNavigation('/OfficialDashboard/OfficialSummaR');setShowChatWindow(false) }} />
           </nav>
         </div>
         <div className="p-4 border-t border-white/20">
@@ -120,12 +122,16 @@ export default function OfficialDashboard() {
           </div>
         </header>
 
+
         {/* Dashboard Cards */}
         <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           <Widget title="Assigned Issues" value={assignedIssuesCount} />
           <Widget title="Resolved This Month" value={resolvedThisMonthCount} />
           <Widget title="Chats with Citizens" value={chatsWithCitizensCount} />
         </section>
+        {
+            showChatWindow && <ChatWindowAdminOfficial userId={userId} userRole='official' />
+        }
       </main>
     </div>
   );

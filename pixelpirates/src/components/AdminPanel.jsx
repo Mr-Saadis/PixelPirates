@@ -8,6 +8,7 @@ const AdminPanel = () => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [userId, setUserId] = useState(null);
 
   // ✅ Role check comes FIRST
   useEffect(() => {
@@ -33,38 +34,44 @@ const AdminPanel = () => {
         return router.push('/');
       }
 
-      if (profile.role !== 'admin') {
-        toast.error('❌ Access Denied');
+      if (profile.role !== 'official') {
+        toast.error('Access Denied');
         return router.push('/');
       }
 
-      // ✅ Only fetch issues if user is admin
-      fetchIssues();
+      setUserId(user.id); // save userId for later
+      fetchIssues(user.id);
     };
 
     checkRole();
   }, []);
 
-  const fetchIssues = async () => {
+  const fetchIssues = async (uid) => {
     setLoading(true);
-    const { data, error } = await supabase.from('issues').select('*');
+    const { data, error } = await supabase
+      .from('issues')
+      .select('*')
+      .eq('assigned_to', uid);
+
     if (!error) setIssues(data);
     setLoading(false);
   };
 
   const handleStatusChange = async (id, newStatus) => {
-    const { error } = await supabase
-      .from('issues')
-      .update({ status: newStatus })
-      .eq('id', id);
+  const { error } = await supabase
+    .from('issues')
+    .update({ status: newStatus })
+    .eq('id', id)
+    .eq('assigned_to', userId); // ensure issue belongs to this user
 
-    if (error) {
-      toast.error('Failed to update status.');
-    } else {
-      toast.success('✅ Status updated.');
-      fetchIssues(); // refresh table
-    }
-  };
+  if (error) {
+    toast.error('Failed to update status: ' + error.message);
+  } else {
+    toast.success('Status updated.');
+    if (userId) fetchIssues(userId); // only fetch if we have user ID
+  }
+};
+
 
   return (
     <div className="overflow-x-auto bg-[#2E5A88] rounded-xl shadow-md p-4">
@@ -91,9 +98,7 @@ const AdminPanel = () => {
                 <td className="px-4 py-2">
                   <select
                     value={issue.status}
-                    onChange={(e) =>
-                      handleStatusChange(issue.id, e.target.value)
-                    }
+                    onChange={(e) => handleStatusChange(issue.id, e.target.value)}
                     className="bg-[#457B9D] text-white rounded-md px-2 py-1"
                   >
                     <option value="pending">Pending</option>

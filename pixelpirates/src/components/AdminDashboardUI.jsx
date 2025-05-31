@@ -93,13 +93,13 @@ export default function AdminDashboard() {
             <SidebarItem
               icon={<FaChartLine />}
               label="Analytics"
-              onClick={() => handleNavigation("/admin/analytics")}
+              onClick={() => handleNavigation("/admindashboard/AdminAnalyticsDashboard")}
             />
-            <SidebarItem
+            {/* <SidebarItem
               icon={<FaPoll />}
               label="Proposals & Polls"
               onClick={() => handleNavigation("/admin/polls")}
-            />
+            /> */}
             <SidebarItem
               icon={<FaEnvelope />}
               label="Messages"
@@ -108,16 +108,16 @@ export default function AdminDashboard() {
                 setRecentMess(true);
               }}
             />
-            <SidebarItem
+            {/* <SidebarItem
               icon={<FaClipboardList />}
               label="Reported Issues"
-              onClick={() => handleNavigation("/admin/issues")}
+              onClick={() => handleNavigation("")}
             />
             <SidebarItem
               icon={<FaFileAlt />}
               label="Reports"
               onClick={() => handleNavigation("/admin/reports")}
-            />
+            /> */}
           </nav>
         </div>
         <div className="p-4 border-t border-white/20">
