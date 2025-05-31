@@ -71,7 +71,7 @@ export default function CitizenDashboard() {
                         <SidebarItem icon={<FaMapMarkerAlt />} label="My Issues (Map)" onClick={() => router.push('/my-issues')} />
                         <SidebarItem icon={<FaChartPie />} label="Proposal Voting" onClick={() => router.push('/dashboard/voting')} />
                         <SidebarItem icon={<FaComments />} label="Chat" onClick={() => router.push('/dashboard/chat')} />
-                        <SidebarItem icon={<FaChartPie />} label="Summary" onClick={() => router.push('/dashboard/summary')} />
+                        <SidebarItem icon={<FaChartPie />} label="Summary" onClick={() => router.push('/citizendashboard/CitizenSummaR')} />
                         <SidebarItem icon={<FaMapMarkerAlt />} label="AR Report" onClick={() => router.push('/dashboard/ar-report')} />
                     </nav>
                 </div>
