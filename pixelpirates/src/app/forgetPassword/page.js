@@ -1,0 +1,10 @@
+import ForgetPassword from "@/components/ForgetPassword";
+import Signup from "@/components/Signup";
+
+export default function signupScreen() {
+  return (
+    <>
+      <ForgetPassword />
+    </>
+  );
+}
