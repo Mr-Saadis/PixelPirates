@@ -42,7 +42,7 @@ const Signup = () => {
         toast("Profile insert failed", { description: insertError.message });
       } else {
         toast("Signup successful!");
-        router.push("/dashboard");
+        router.push("/login");
       }
     }
 
