@@ -89,7 +89,7 @@ export default function OfficialDashboard() {
           <nav className="flex flex-col gap-2 p-4">
             <SidebarItem icon={<FaHome />} label="Home" onClick={() => handleNavigation('/officialdashboard')} />
             <SidebarItem icon={<FaEdit />} label="Update Issues" onClick={() => handleNavigation('/officialdashboard/update-issues')} />
-            <SidebarItem icon={<FaMapMarkedAlt />} label="Map View" onClick={() => handleNavigation('/officialdashboard/map')} />
+            <SidebarItem icon={<FaMapMarkedAlt />} label="Map View" onClick={() => handleNavigation('/map')} />
             <SidebarItem icon={<FaComments />} label="Chat with Admin" onClick={() => handleNavigation('/officialdashboard/chat-admin')} />
             <SidebarItem icon={<FaComments />} label="Chat with Citizens" onClick={() => handleNavigation('/officialdashboard/chat-citizens')} />
             <SidebarItem icon={<FaUserShield />} label="Performance" onClick={() => handleNavigation('/officialdashboard/performance')} />
