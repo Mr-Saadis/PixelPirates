@@ -9,6 +9,7 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [userId, setUserId] = useState(null);
+  const [ProfiledepID, setProfiledepID] = useState(null);
 
   // ✅ Role check comes FIRST
   useEffect(() => {
@@ -25,7 +26,7 @@ const AdminPanel = () => {
 
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('role')
+        .select('*')
         .eq('id', user.id)
         .single();
 
@@ -40,18 +41,19 @@ const AdminPanel = () => {
       }
 
       setUserId(user.id); // save userId for later
-      fetchIssues(user.id);
+      setProfiledepID(profile.dept_id); // save userId for later
+      fetchIssues(profile.dept_id); // fetch issues for this department
     };
 
     checkRole();
   }, []);
 
-  const fetchIssues = async (uid) => {
+  const fetchIssues = async (P_dep_id) => {
     setLoading(true);
     const { data, error } = await supabase
       .from('issues')
       .select('*')
-      .eq('assigned_to', uid);
+      .eq('dep_id', P_dep_id) // filter by department ID;
 
     if (!error) setIssues(data);
     setLoading(false);
@@ -62,7 +64,7 @@ const AdminPanel = () => {
     .from('issues')
     .update({ status: newStatus })
     .eq('id', id)
-    .eq('assigned_to', userId); // ensure issue belongs to this user
+    .eq('dep_id', ProfiledepID); // ensure issue belongs to this user
 
   if (error) {
     toast.error('Failed to update status: ' + error.message);

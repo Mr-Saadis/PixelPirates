@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { supabase } from '@/lib/supabaseClient';
+import { toast } from 'sonner';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -18,8 +19,36 @@ const PublicMap = () => {
 
   useEffect(() => {
     const fetchIssues = async () => {
-      const { data, error } = await supabase.from('issues').select('*');
-      if (!error) setIssues(data);
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        toast.error('You must be logged in.');
+        return router.push('/login');
+      }
+
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError || !profile) {
+        toast.error('Could not verify role.');
+        return router.push('/');
+      }
+
+      if (profile.role === 'official') {
+              const { data, error } = await supabase.from('issues').select('*').eq('dep_id', profile.dept_id);
+              if (!error) setIssues(data);
+            }else if (profile.role == 'admin') {
+              const { data, error } = await supabase.from('issues').select('*');
+              if (!error) setIssues(data);
+      }
+
+
     };
     fetchIssues();
   }, []);
@@ -37,6 +66,8 @@ const PublicMap = () => {
               <strong>{issue.title}</strong>
               <br />
               <span>Status: {issue.status}</span>
+              <br />
+              <span>Description: {issue.description}</span>
             </Popup>
           </Marker>
         ))}
