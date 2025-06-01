@@ -108,12 +108,13 @@ export default function AdminDashboard() {
                 setRecentMess(true);
               }}
             />
-            {/* <SidebarItem
-              icon={<FaClipboardList />}
-              label="Reported Issues"
-              onClick={() => handleNavigation("")}
-            />
+         
             <SidebarItem
+              icon={<FaClipboardList />}
+              label="Reported Issues (Map)"
+              onClick={() => handleNavigation("map")}
+            />
+            {/* <SidebarItem
               icon={<FaFileAlt />}
               label="Reports"
               onClick={() => handleNavigation("/admin/reports")}
